@@ -2,7 +2,7 @@
 import React, { createContext, useState, useEffect, useContext } from "react";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
-import { getLocalWatchlist, setLocalWatchlist } from "../utils/watchlist"; // ✅ helper for local storage
+import { getLocalWatchlist } from "../utils/watchlist"; // ✅ Only keep what is used
 
 const AuthContext = createContext();
 
