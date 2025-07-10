@@ -138,12 +138,21 @@ function HomePage() {
         <button
           className="cool-btn"
           disabled={page === 1}
-          onClick={() => setPage((p) => p - 1)}
+          onClick={() => {
+            setPage((p) => p - 1);
+            window.scrollTo({ top: 0, behavior: "smooth" }); // 👈 scroll to top
+          }}
         >
           ◀️ Prev
         </button>
         <span className="text-sm">Page {page}</span>
-        <button className="cool-btn" onClick={() => setPage((p) => p + 1)}>
+        <button
+          className="cool-btn"
+          onClick={() => {
+            setPage((p) => p + 1);
+            window.scrollTo({ top: 0, behavior: "smooth" }); // 👈 scroll to top
+          }}
+        >
           Next ▶️
         </button>
       </div>

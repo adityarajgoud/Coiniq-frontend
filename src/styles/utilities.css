@@ -3,6 +3,9 @@ body {
   max-width: 100%;
   overflow-x: hidden;
 }
+html {
+  scroll-behavior: smooth;
+}
 
 body {
   margin: 0;
@@ -171,38 +174,38 @@ body.bg-dark {
 /* === Coin Grid === */
 .coin-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem; /* space between cards */
   justify-items: center;
   align-items: start;
   margin-top: 2rem;
-  padding: 0;
+  padding: 0 1rem; /* ✅ horizontal space on left & right */
 }
 
 /* === Coin Card === */
 .coin-card {
-  background: linear-gradient(135deg, #1c1c1c, #292929);
-  border: 1px solid rgba(0, 255, 204, 0.3);
+  background-color: #1a1a1a;
+  border-radius: 12px;
   padding: 1rem;
-  border-radius: 16px;
+  box-shadow: 0 0 10px rgba(0, 255, 204, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  backdrop-filter: blur(8px);
-  box-shadow: 0 4px 12px rgba(0, 255, 204, 0.12);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  justify-content: space-between;
+  overflow: hidden;
+  position: relative;
   width: 100%;
-  max-width: 220px;
-  aspect-ratio: 1 / 1;
-  box-sizing: border-box;
+  min-height: 330px;
+  height: 100%;
   text-align: center;
-  cursor: pointer;
+  margin: 0.5rem; /* ✅ this creates space between cards */
 }
 
 .coin-card:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 20px rgba(0, 255, 204, 0.3);
+  transform: translateY(-4px);
+  box-shadow: 0 0 16px rgba(0, 255, 204, 0.2);
 }
 
 /* === Navbar === */
@@ -389,7 +392,10 @@ canvas {
 
 @media (max-width: 768px) {
   .coin-grid {
-    grid-template-columns: repeat(2, 1fr);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 2rem;
   }
 
   .container {
@@ -409,20 +415,37 @@ canvas {
     padding-left: 0.5rem; /* Smaller padding for small screens */
   }
 }
-
-@media (max-width: 480px) {
-  .coin-grid {
-    grid-template-columns: 1fr;
-  }
-
+@media (max-width: 430px) {
   .coin-card {
-    width: 100%;
+    padding: 0.9rem 0.7rem;
   }
 
+  .coin-logo {
+    height: 40px;
+  }
+
+  .coin-name {
+    font-size: 1.05rem;
+  }
+
+  .coin-price,
+  .coin-card p {
+    font-size: 0.85rem;
+  }
+
+  .cool-btn {
+    font-size: 0.75rem;
+    padding: 0.3rem 0.9rem;
+  }
+
+  .sparkline-wrapper {
+    max-width: 100%;
+  }
   .input-glow {
     width: 100%;
   }
 }
+
 /* Custom logo shift */
 .logo-shift {
   margin-left: 2rem; /* You can increase to 3rem or 4rem if needed */
@@ -624,6 +647,29 @@ canvas {
     font-size: 14px;
   }
 }
+@media (max-width: 768px) {
+  .compare-table {
+    font-size: 14px;
+    table-layout: fixed;
+  }
+
+  .compare-table th,
+  .compare-table td {
+    padding: 0.5rem;
+    word-wrap: break-word;
+    word-break: break-word;
+    font-size: 13px;
+  }
+
+  .compare-table th {
+    font-size: 14px;
+  }
+
+  .compare-table td {
+    font-size: 13px;
+  }
+}
+
 /* Fade-in Animation for Cards or Tables */
 .fade-in {
   animation: fadeInUp 0.6s ease-in-out;

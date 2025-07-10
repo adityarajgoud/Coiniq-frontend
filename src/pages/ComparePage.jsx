@@ -22,7 +22,7 @@ function ComparePage() {
         params: {
           vs_currency: currency,
           order: "market_cap_desc",
-          per_page: 100,
+          per_page: 50, // 🔽 Reduced for performance
           page: 1,
         },
       });
@@ -73,21 +73,21 @@ function ComparePage() {
     await fetchSelectedCoinDetails(selected);
   };
 
+  // 🛡 Refresh every 15s ONLY if coins are selected
   useEffect(() => {
     if (selectedOptions.length === 0) return;
-    const interval = setInterval(() => {
+    const timeout = setTimeout(() => {
       fetchSelectedCoinDetails(selectedOptions);
     }, 15000);
-    return () => clearInterval(interval);
+    return () => clearTimeout(timeout);
   }, [selectedOptions, fetchSelectedCoinDetails]);
 
-  const getBestValue = (metric) => {
-    return Math.max(
+  const getBestValue = (metric) =>
+    Math.max(
       ...selectedCoins.map(
         (coin) => coin.market_data?.[metric]?.[currency] || 0
       )
     );
-  };
 
   return (
     <div className="container p-4 compare-page" style={{ overflow: "visible" }}>
@@ -172,6 +172,7 @@ function ComparePage() {
             <img
               src={coin.image?.large}
               alt={coin.name}
+              loading="lazy" // ✅ Lazy load for mobile
               style={{ height: 60, marginBottom: 10 }}
             />
             <h3 className="text-gold">{coin.name}</h3>
@@ -192,7 +193,7 @@ function ComparePage() {
 
       {/* Stat Table */}
       {selectedCoins.length > 0 && (
-        <table className="compare-table fade-in">
+        <table className="compare-table fade-in responsive-table">
           <thead>
             <tr>
               <th>Metric</th>
