@@ -159,7 +159,7 @@ function About() {
             aria-label="GitHub"
             title="GitHub"
             style={{
-              color: "#555", // light gray for visibility
+              color: "#555",
               boxShadow: "0 0 10px rgba(23, 21, 21, 0.15)",
             }}
           >
@@ -209,36 +209,53 @@ function About() {
             </h2>
             <form onSubmit={handleSubmit} className="w-full">
               <div
-                className="flex flex-wrap justify-between gap-4 mb-6"
-                style={{ rowGap: "1rem" }}
+                style={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  gap: "1rem",
+                  marginBottom: "1rem",
+                }}
               >
-                <input
-                  type="text"
-                  name="name"
-                  placeholder="Your Name"
-                  required
-                  className="input-glow"
-                  style={{ flex: "1 1 30%", minWidth: "200px" }}
-                />
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="Your Email"
-                  required
-                  className="input-glow"
-                  style={{ flex: "1 1 30%", minWidth: "200px" }}
-                />
+                <div style={{ flex: "1 1 45%", minWidth: "200px" }}>
+                  <input
+                    type="text"
+                    name="name"
+                    placeholder="Your Name"
+                    required
+                    className="input-glow"
+                    style={{ width: "100%" }}
+                  />
+                </div>
+                <div style={{ flex: "1 1 45%", minWidth: "200px" }}>
+                  <input
+                    type="email"
+                    name="email"
+                    placeholder="Your Email"
+                    required
+                    className="input-glow"
+                    style={{ width: "100%" }}
+                  />
+                </div>
+              </div>
+
+              <div className="mb-6" style={{ textAlign: "center" }}>
                 <textarea
                   name="message"
                   placeholder="Your Message"
-                  rows="1"
+                  rows="4"
                   required
                   className="input-glow"
-                  style={{ flex: "1 1 30%", minWidth: "200px" }}
+                  style={{
+                    width: "80%",
+                    maxWidth: "600px",
+                    padding: "0.75rem",
+                    borderRadius: "8px",
+                    border: "1px solid #ccc",
+                  }}
                 ></textarea>
               </div>
 
-              <div className="button-center">
+              <div className="button-center" style={{ textAlign: "center" }}>
                 <button
                   type="submit"
                   className="cool-btn"
