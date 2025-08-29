@@ -40,7 +40,7 @@ function TrendingCarousel({ currency }) {
             (a, b) =>
               b.price_change_percentage_24h - a.price_change_percentage_24h
           )
-          .slice(0, 5);
+          .slice(0, 8); // Increased to 8 slides
 
         setTrendingCoins(sorted);
       } catch (err) {
@@ -53,52 +53,58 @@ function TrendingCarousel({ currency }) {
     fetchTrendingCoins();
   }, [currency, setIsLoading]);
 
+  const loopEnabled = trendingCoins.length > 4;
+
   return (
     <div className="mb-6">
       <h2 className="text-2xl text-accent mb-2">🚀 Trending Coins (24h)</h2>
 
-      <Swiper
-        modules={[Autoplay]}
-        autoplay={{ delay: 2000 }}
-        spaceBetween={20}
-        slidesPerView={1.5}
-        breakpoints={{
-          480: { slidesPerView: 2 },
-          768: { slidesPerView: 3 },
-          1024: { slidesPerView: 4 },
-        }}
-        loop={true}
-      >
-        {trendingCoins.map((coin) => (
-          <SwiperSlide key={coin.id}>
-            <div
-              className="trending-coin-circle cursor-pointer"
-              onClick={() => navigate(`/coin/${coin.id}`)}
-            >
-              <img
-                src={coin.image}
-                alt={coin.name}
-                width={50}
-                height={50}
-                style={{ objectFit: "contain" }}
-              />
-              <h4 className="mt-2">{coin.name}</h4>
-              <p
-                className={
-                  coin.price_change_percentage_24h > 0
-                    ? "text-green"
-                    : "text-red"
-                }
+      {trendingCoins.length > 0 && (
+        <Swiper
+          key={loopEnabled ? "loop" : "no-loop"} // 🔑 force re-render
+          modules={[Autoplay]}
+          autoplay={{ delay: 2000 }}
+          spaceBetween={20}
+          slidesPerView={1.5}
+          breakpoints={{
+            480: { slidesPerView: 2 },
+            768: { slidesPerView: 3 },
+            1024: { slidesPerView: 4 },
+          }}
+          loop={loopEnabled}
+        >
+          {trendingCoins.map((coin) => (
+            <SwiperSlide key={coin.id}>
+              <div
+                className="trending-coin-circle cursor-pointer"
+                onClick={() => navigate(`/coin/${coin.id}`)}
               >
-                {coin.price_change_percentage_24h?.toFixed(2)}%
-              </p>
-              <p className="text-sm">
-                {currency.toUpperCase()} {coin.current_price?.toLocaleString()}
-              </p>
-            </div>
-          </SwiperSlide>
-        ))}
-      </Swiper>
+                <img
+                  src={coin.image}
+                  alt={coin.name}
+                  width={50}
+                  height={50}
+                  style={{ objectFit: "contain" }}
+                />
+                <h4 className="mt-2">{coin.name}</h4>
+                <p
+                  className={
+                    coin.price_change_percentage_24h > 0
+                      ? "text-green"
+                      : "text-red"
+                  }
+                >
+                  {coin.price_change_percentage_24h?.toFixed(2)}%
+                </p>
+                <p className="text-sm">
+                  {currency.toUpperCase()}{" "}
+                  {coin.current_price?.toLocaleString()}
+                </p>
+              </div>
+            </SwiperSlide>
+          ))}
+        </Swiper>
+      )}
     </div>
   );
 }
