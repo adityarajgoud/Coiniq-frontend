@@ -9,6 +9,7 @@ import {
   PointElement,
   LineElement,
   Tooltip,
+  Filler,
   Legend,
 } from "chart.js";
 import "chartjs-adapter-date-fns"; // for date/time support in chartjs
@@ -22,7 +23,8 @@ ChartJS.register(
   PointElement,
   LineElement,
   Tooltip,
-  Legend
+  Legend,
+  Filler
 );
 
 function CoinDetailsPage() {
