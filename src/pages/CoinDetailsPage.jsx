@@ -4,19 +4,20 @@ import { useParams } from "react-router-dom";
 import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
-  CategoryScale,
+  TimeScale,
   LinearScale,
   PointElement,
   LineElement,
   Tooltip,
   Legend,
 } from "chart.js";
+import "chartjs-adapter-date-fns"; // for date/time support in chartjs
 import { handleAxiosError } from "../utils/handleAxiosError";
 import { useGlobalLoading } from "../context/LoadingContext";
 
 // Register required Chart.js modules
 ChartJS.register(
-  CategoryScale,
+  TimeScale,
   LinearScale,
   PointElement,
   LineElement,
@@ -79,23 +80,101 @@ function CoinDetailsPage() {
   const profit = change >= 0;
 
   const chart = {
-    labels: chartData.map(([timestamp]) => {
-      const date = new Date(timestamp);
-      return days === 1 ? date.toLocaleTimeString() : date.toLocaleDateString();
-    }),
+    labels: chartData.map(([timestamp]) => timestamp),
     datasets: [
       {
         label: `${coin.name} Price (${currency.toUpperCase()})`,
         data: chartData.map(([, price]) => price),
         borderColor: "#00ffc3",
-        backgroundColor: "rgba(0,255,204,0.1)",
-        tension: 0.3,
+        backgroundColor: (context) => {
+          const chart = context.chart;
+          const { ctx, chartArea } = chart;
+
+          if (!chartArea) return null;
+
+          const gradient = ctx.createLinearGradient(
+            0,
+            chartArea.bottom,
+            0,
+            chartArea.top
+          );
+          gradient.addColorStop(0, "rgba(0, 255, 204, 0)");
+          gradient.addColorStop(1, "rgba(0, 255, 204, 0.3)");
+          return gradient;
+        },
+        fill: true,
+        tension: 0.4,
+        pointRadius: 0,
+        borderWidth: 2,
       },
     ],
   };
 
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    interaction: {
+      mode: "nearest",
+      axis: "x",
+      intersect: false,
+    },
+    scales: {
+      x: {
+        type: "time",
+        time: {
+          unit: days === 1 ? "hour" : "day",
+          tooltipFormat: "PPpp", // pretty date+time format
+          displayFormats: {
+            hour: "HH:mm",
+            day: "MMM d",
+          },
+        },
+        ticks: {
+          maxRotation: 0,
+          autoSkip: true,
+          maxTicksLimit: 8,
+          color: "#aaa",
+        },
+        grid: {
+          color: "#222",
+        },
+      },
+      y: {
+        beginAtZero: false,
+        ticks: {
+          color: "#aaa",
+          callback: (value) => `${symbol}${value.toFixed(2)}`,
+          maxTicksLimit: 8,
+        },
+        grid: {
+          color: "#222",
+        },
+      },
+    },
+    plugins: {
+      legend: {
+        display: false,
+      },
+      tooltip: {
+        enabled: true,
+        mode: "nearest",
+        intersect: false,
+        backgroundColor: "#333",
+        titleColor: "#00ffc3",
+        bodyColor: "#fff",
+        callbacks: {
+          label: (context) => `${symbol}${context.parsed.y.toFixed(2)}`,
+          title: (context) => {
+            const dt = context[0].parsed.x;
+            return new Date(dt).toLocaleString();
+          },
+        },
+      },
+    },
+  };
+
   return (
-    <div className="container p-4">
+    <div className="container p-4" style={{ maxWidth: 900 }}>
       {/* 🔹 Coin Header */}
       <div className="flex items-center gap-4 mb-4 responsive-flex">
         <img
@@ -137,8 +216,16 @@ function CoinDetailsPage() {
       </div>
 
       {/* 🔹 Chart */}
-      <div className="mb-4">
-        <Line data={chart} />
+      <div
+        className="mb-4"
+        style={{
+          height: 400,
+          backgroundColor: "#0f1216",
+          padding: "12px",
+          borderRadius: 8,
+        }}
+      >
+        <Line data={chart} options={options} />
       </div>
 
       {/* 🔹 Market Stats */}
