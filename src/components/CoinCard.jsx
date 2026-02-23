@@ -6,7 +6,14 @@ import "../styles/utilities.css";
 
 function CoinCard({ coin, isInWatchlist, toggleWatchlist, currency }) {
   const navigate = useNavigate();
-  const profit = coin.price_change_percentage_24h >= 0;
+
+  // ✅ Safe numeric defaults (prevents null crashes)
+  const price = coin.current_price ?? 0;
+  const change24h = coin.price_change_percentage_24h ?? 0;
+  const marketCap = coin.market_cap ?? 0;
+  const volume = coin.total_volume ?? 0;
+
+  const profit = change24h >= 0;
   const symbol = currency === "inr" ? "₹" : currency === "eur" ? "€" : "$";
 
   const [tiltEnabled, setTiltEnabled] = useState(true);
@@ -53,30 +60,31 @@ function CoinCard({ coin, isInWatchlist, toggleWatchlist, currency }) {
         className="text-xl text-gold"
         style={{ wordBreak: "break-word", minHeight: "2.4rem" }}
       >
-        {coin.symbol.toUpperCase()} • {coin.name}
+        {coin.symbol?.toUpperCase() || ""} • {coin.name}
       </h2>
 
       <p style={{ minHeight: "1.2rem" }}>
         Price: {symbol}
-        {coin.current_price.toLocaleString()}
+        {price.toLocaleString()}
       </p>
 
       <p
         className={profit ? "text-green" : "text-red"}
         style={{ minHeight: "1.2rem" }}
       >
-        {profit ? "▲" : "▼"} {coin.price_change_percentage_24h.toFixed(2)}%
+        {profit ? "▲" : "▼"} {change24h.toFixed(2)}%
       </p>
 
       <Sparkline />
 
       <p className="text-xs mt-1" style={{ minHeight: "1rem" }}>
         💰 Market Cap: {symbol}
-        {coin.market_cap.toLocaleString()}
+        {marketCap.toLocaleString()}
       </p>
+
       <p className="text-xs" style={{ minHeight: "1rem" }}>
         📊 Volume (24h): {symbol}
-        {coin.total_volume.toLocaleString()}
+        {volume.toLocaleString()}
       </p>
 
       <button className="cool-btn mt-2" onClick={handleWatchlistClick}>
@@ -91,12 +99,12 @@ function CoinCard({ coin, isInWatchlist, toggleWatchlist, currency }) {
       glareMaxOpacity={0.2}
       scale={1.03}
       transitionSpeed={400}
-      style={{ margin: "0.75rem" }} // ✅ Add margin here!
+      style={{ margin: "0.75rem" }}
     >
       {CardContent}
     </Tilt>
   ) : (
-    <div style={{ margin: "0.75rem" }}>{CardContent}</div> // ✅ same spacing for fallback
+    <div style={{ margin: "0.75rem" }}>{CardContent}</div>
   );
 }
 
